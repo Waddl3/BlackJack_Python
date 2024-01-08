@@ -32,5 +32,17 @@ def check_winner(user, dealer):
         return "Tie"
 
 def restart_game(restart):
+    """
+    Determines whether to restart the program based on user input.
+
+    Args:
+    - restart (str): 
+        User's choice to restart the program ('y' for yes, 'n' for no)
+
+    Returns:
+    - bool: 
+        True if the user chooses not to restart (inputs 'n'),
+        False if the user chooses to restart (inputs 'y')
+    """
     if restart == 'y': return False
     elif restart == 'n' : return True
