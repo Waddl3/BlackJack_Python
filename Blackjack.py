@@ -30,3 +30,7 @@ def check_winner(user, dealer):
         return "Dealer"
     else:
         return "Tie"
+
+def restart_game(restart):
+    if restart == 'y': return False
+    elif restart == 'n' : return True
