@@ -1,61 +1,62 @@
 from logo import logo
-from Blackjack import random, display, drawCard
+import Blackjack, random
 
-# Given:
-print(logo); # Logo
-cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10] # deck of cards
-starter = 0
+print(logo)  # Display logo
 
-user_card  = []
-user_total = 0
-dealer_card = []
-dealer_total = 0
-_continue = True
+cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10]  # Deck of cards
 
-# 2 cards
-while starter < 2:
-    uRandom = random.choice(cards)
-    user_card.append(uRandom)
-    user_total += uRandom
-    
-    dRandom = random.choice(cards)
-    dealer_card.append(dRandom)
-    dealer_total += dRandom
-    
-    starter += 1
+user_cards = []
+dealer_cards = []
+game_over = False
 
-display(userCards=user_card, dealerCards=dealer_card)
+# Deal initial cards
+for _ in range(2):
+    user_cards.append(random.choice(cards))
+    dealer_cards.append(random.choice(cards))
 
-# check if either one has blackjack (21)
-if user_total == 21 or dealer_total == 21:
-    if dealer_total == 21:
-        print("Dealer Wins")
-        _continue = False
-    else: 
-        user_total == 21
-        print("User Wins!")
-        _continue = False
+# Display initial hands
+Blackjack.display(user_cards, dealer_cards, dealer_hide=True)
+
+# Check for initial Blackjack
+if Blackjack.is_blackjack(sum(user_cards), len(user_cards)):
+    print("You have a natural Blackjack! You win!")
+    game_over = True
         
-while _continue:
-    dChoice = random.randint(0, 1)
+while not game_over:
+    user_choice = input("Do you want to draw another card? ('y' or 'n'):").lower()
     
-    uChoice = input("Draw card ('d') or Stay('s')? ")
-    if uChoice.lower() == 'd':
-        drawn = new_card = random.choice(cards)
-        user_total, user_card = drawCard(total=user_total, player=user_card, new_card=drawn) 
-        display(userCards=user_card, dealerCards=dealer_card)
-    elif uChoice.lower() == 's':    # Once player is done drawing
+    if user_choice == 'y':
+        new_card = random.choice(cards)
+        total, user_cards = Blackjack.draw_card(sum(user_cards), user_cards, new_card)
+        Blackjack.display(user_cards, dealer_cards, dealer_hide=True)
+        
+        if total > 21:
+            print("You busted! Dealer wins!")
+            game_over = True
+    else:
+        # Dealer's turn
+        dealer_total = sum(dealer_cards)
+        
+        # Reveal dealer's hidden card
+        Blackjack.display(user_cards, dealer_cards, False)
+        
+        # Dealer draws cards until reaching 17 or more
         while dealer_total < 17:
-            drawn = new_card = random.choice(cards)
-            dealer_total, dealer_card = drawCard(total=dealer_total, player=dealer_card, new_card=drawn)
-    
-    if user_total > 21:
-        print("Dealer Wins!")
-        _continue = False;
-    elif dealer_total > 21:
-        print("User Wins!")
-        _continue = False
-    
-        
-
-
+            new_card = random.choice(cards)
+            dealer_total, dealer_cards = Blackjack.draw_card(dealer_total, dealer_cards, new_card)
+            Blackjack.display(user_cards, dealer_cards, dealer_hide=False)
+            
+            if dealer_total > 21:
+                    print("Dealer busted! You win!")
+                    game_over = True
+                    break
+        if not game_over:
+             # Compare hands
+                winner = Blackjack.check_winner(sum(user_cards), dealer_total)
+                if winner == "Player":
+                    print("You win!")
+                elif winner == "Dealer":
+                    print("Dealer wins!")
+                else:
+                    print("It's a tie!")
+                game_over = True
